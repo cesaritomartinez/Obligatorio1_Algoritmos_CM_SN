@@ -3,7 +3,7 @@ package tads;
 /* Clase ListaSE: Implementacion del TDA Lista usando
  * nodos simplemente enlazados, con apuntador al primer nodo 
  */
-public class ListaSE<T> implements ILista<T> {
+public class ListaSE<T extends Comparable<T>> implements ILista<T> {
 
     protected NodoSE<T> cabeza;
     protected int longitud;
@@ -86,6 +86,44 @@ public class ListaSE<T> implements ILista<T> {
     public boolean Vacia() {
         return (longitud == 0);
 
+    }
+    
+    
+    @Override
+    public void adicionarOrdenado(T elem) {
+        NodoSE<T> nuevoNodo = new NodoSE<T>(elem, null);
+
+        if (cabeza == null || cabeza.getDato().compareTo(elem) > 0) {
+            nuevoNodo.setSiguiente(cabeza);
+            cabeza = nuevoNodo;
+        } else {
+            NodoSE<T> nodoActual = cabeza;
+            while (nodoActual.getSiguiente() != null && nodoActual.getSiguiente().getDato().compareTo(elem) < 0) {
+
+                nodoActual = nodoActual.getSiguiente();
+            }
+            nuevoNodo.setSiguiente(nodoActual.getSiguiente());
+            nodoActual.setSiguiente(nuevoNodo);
+        }
+
+        longitud++;
+    }
+    
+    
+    @Override
+    public boolean existeElemento(T elem){
+        if (Vacia()) {
+            throw new ListaVaciaException();
+        } else {
+           NodoSE<T> aux = cabeza;
+           while (aux != null){
+            if (aux.getDato().equals(elem)) return true;
+            else 
+            aux = aux.getSiguiente();
+           }
+        }
+       
+        return false;
     }
 
 }

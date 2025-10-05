@@ -13,4 +13,8 @@ public interface ILista<T> {
     int Longitud();
 
     boolean Vacia();
+    
+     boolean existeElemento(T x);
+    
+    void adicionarOrdenado(T x);
 }

@@ -24,17 +24,20 @@ public class Test3_01ObtenerUsuario {
 
     @Test
     public void obtenerUsuarioError01() {
-        //Completar
+        retorno = s.obtenerUsuario(null);
+    assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
     }
 
     @Test
     public void obtenerUsuarioError02() {
-        //Completar
+        retorno = s.obtenerUsuario("123");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
     }
 
     @Test
     public void obtenerUsuarioError03() {
-        //Completar
+        retorno = s.obtenerUsuario("28843838");
+        assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
     }
 
 }

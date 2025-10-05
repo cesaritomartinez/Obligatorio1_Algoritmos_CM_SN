@@ -13,5 +13,6 @@ public class Test2_01CrearSistemaDeGestion {
         retorno = s.crearSistemaDeGestion();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
     }
+    
 
 }

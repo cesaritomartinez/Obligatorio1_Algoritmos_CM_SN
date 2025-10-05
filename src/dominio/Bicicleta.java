@@ -1,27 +1,53 @@
 package dominio;
 
+public class Bicicleta implements Comparable<Bicicleta> {
 
-public class Bicicleta {
-    
-    private final String codigo;   // 6 caracteres, único
-    private final String tipo;     // "URBANA" | "MOUNTAIN" | "ELECTRICA"
-    private String estado;         // "DEPOSITO" | "MANTENIMIENTO" | "DISPONIBLE"
+    public enum Tipo   { URBANA, MOUNTAIN, ELECTRICA }
+    public enum Estado { DEPOSITO, MANTENIMIENTO, DISPONIBLE, ALQUILADA }
 
-    public Bicicleta(String codigo, String tipo) {
+    private final String codigo;         // 6 caracteres, único
+    private final Tipo tipo;
+    private Estado estado;               // inicia en DEPOSITO
+    private String motivoMantenimiento;  // null cuando no aplica
+
+    public Bicicleta(String codigo, Tipo tipo) {
+        // Se asume validado externamente
         this.codigo = codigo;
         this.tipo = tipo;
-        this.estado = "DEPOSITO";  // al registrarla queda en depósito
+        this.estado = Estado.DEPOSITO;
+        this.motivoMantenimiento = null;
     }
 
     public String getCodigo() { return codigo; }
-    public String getTipo()   { return tipo;   }
+    public Tipo getTipo() { return tipo; }
+    public Estado getEstado() { return estado; }
+    public String getMotivoMantenimiento() { return motivoMantenimiento; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    
+    public void marcarEnMantenimiento(String codigo, String motivo) {
+        this.estado = Estado.MANTENIMIENTO;
+        this.motivoMantenimiento = motivo;
+    }
+
+    
+    public void reparar() {
+        this.estado = Estado.DISPONIBLE;
+        this.motivoMantenimiento = null;
+    }
+
+    
+
+    @Override
+    public int compareTo(Bicicleta o) {
+        return this.codigo.compareTo(o.codigo);
+    }
 
     @Override
     public String toString() {
-        // Útil para 3.3: "codigo#tipo#estado"
         return codigo + "#" + tipo + "#" + estado;
+        // Si querés incluir el motivo cuando está en mantenimiento:
+        // return (estado == Estado.MANTENIMIENTO && motivoMantenimiento != null)
+        //        ? codigo + "#" + tipo + "#" + estado + "#" + motivoMantenimiento
+        //        : codigo + "#" + tipo + "#" + estado;
     }
 }
