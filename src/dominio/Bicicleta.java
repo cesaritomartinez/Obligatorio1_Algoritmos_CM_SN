@@ -2,19 +2,22 @@ package dominio;
 
 public class Bicicleta implements Comparable<Bicicleta> {
 
+
     public enum Tipo   { URBANA, MOUNTAIN, ELECTRICA }
-    public enum Estado { DEPOSITO, MANTENIMIENTO, DISPONIBLE, ALQUILADA }
+    public enum Estado { MANTENIMIENTO, DISPONIBLE, ALQUILADA }
 
     private final String codigo;         // 6 caracteres, único
     private final Tipo tipo;
     private Estado estado;               // inicia en DEPOSITO
     private String motivoMantenimiento;  // null cuando no aplica
+    private Estacion estacionActual; // null si esta en deposito
 
     public Bicicleta(String codigo, Tipo tipo) {
         // Se asume validado externamente
         this.codigo = codigo;
         this.tipo = tipo;
-        this.estado = Estado.DEPOSITO;
+        this.estado = Estado.DISPONIBLE;
+        this.estacionActual = null;
         this.motivoMantenimiento = null;
     }
 
@@ -22,6 +25,9 @@ public class Bicicleta implements Comparable<Bicicleta> {
     public Tipo getTipo() { return tipo; }
     public Estado getEstado() { return estado; }
     public String getMotivoMantenimiento() { return motivoMantenimiento; }
+    public Estacion getEstacionActual() {return estacionActual;}
+    
+    public void setEstacionActual(Estacion e) { this.estacionActual = e; }
 
     
     public void marcarEnMantenimiento(String codigo, String motivo) {
@@ -35,7 +41,20 @@ public class Bicicleta implements Comparable<Bicicleta> {
         this.motivoMantenimiento = null;
     }
 
+    public void setEstado(Estado nuevo) {
+        this.estado = nuevo;
+    }
     
+    public void setMotivoMantenimiento(String motivo) {
+    // guarda null si viene vacío; si no, lo deja prolijo
+    if (motivo == null) {
+        this.motivoMantenimiento = null;
+    } else {
+        String m = motivo;
+        this.motivoMantenimiento = m.isEmpty() ? null : m;
+    }
+}
+
 
     @Override
     public int compareTo(Bicicleta o) {

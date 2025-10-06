@@ -41,6 +41,7 @@ public class Estacion implements Comparable<Estacion>{
         if (!tieneAnclajeLibre()) return false;
         // La bici debe venir como DISPONIBLE (validado en Sistema)
         ancladas.adicionarOrdenado(bici);
+        bici.setEstacionActual(this);
         return true;
     }
 
@@ -49,6 +50,7 @@ public class Estacion implements Comparable<Estacion>{
         if (ancladas.Vacia()) return null;
         Bicicleta primera = ancladas.Obtener(0);
         ancladas.Eliminar(0);
+        primera.setEstacionActual(null);
         
         return primera;
     }
@@ -63,9 +65,24 @@ public class Estacion implements Comparable<Estacion>{
         resultado += b.getCodigo();
     }
     return resultado;
-}
+    }
+    
+    public void retirarBiciPorCodigo(String codigo) {
+        int n = ancladas.Longitud();
+    for (int i = 0; i < n; i++) {
+        Bicicleta b = ancladas.Obtener(i);
+        if (b.getCodigo().equals(codigo)) {
+            ancladas.Eliminar(i);   // quita la bici de la estación
+            b.setEstacionActual(null); 
+            
+            return; // listo: ya la retiramos
+        }
+    }
+    }
+    
+   
 
-    // ===== Colas de espera (implementadas con ListaSE como FIFO) =====
+
 
     // ---- Espera para ALQUILAR en esta estación ----
     public void encolarEsperaAlquiler(String cedula) {
@@ -117,4 +134,6 @@ public class Estacion implements Comparable<Estacion>{
         
         return nombre + "#" + barrio + "#" + getOcupacion() + "/" + capacidad;
     }
+
+    
 }
