@@ -24,6 +24,8 @@ public class Sistema implements IObligatorio {
     // “Pila” de retiros para Deshacer últimos retiros (LIFO)
     private ListaSE<Alquiler> retiros;
     
+    private ListaSE<Bicicleta> bicicletas;
+    
     // =======================
     // Contadores/estadísticas
     // =======================
@@ -82,13 +84,13 @@ public class Sistema implements IObligatorio {
     
     private Bicicleta buscarBicicletaPorCodigo(String cod) {
     String key = cod.trim();
-    int n = deposito.Longitud();
+    int n = bicicletas.Longitud();
     for (int i = 0; i < n; i++) {
-        Bicicleta b = deposito.Obtener(i);
+        Bicicleta b = bicicletas.Obtener(i);
         if (b != null && key.equals(b.getCodigo())) return b;
     }
     return null;
-}
+    }
     
 
     @Override
@@ -98,6 +100,7 @@ public class Sistema implements IObligatorio {
     estaciones = new ListaSE<>();
     deposito = new ListaSE<>();
     retiros = new ListaSE<>();
+    bicicletas = new ListaSE<>();
     
         return Retorno.ok();
     }
@@ -135,13 +138,30 @@ public class Sistema implements IObligatorio {
         
         Bicicleta bici = new Bicicleta(codigo, parseTipo(tipo));
         deposito.adicionarOrdenado(bici);
+        bicicletas.adicionarOrdenado(bici);
         
         return Retorno.ok();
     }
 
     @Override
     public Retorno marcarEnMantenimiento(String codigo, String motivo) {
-        return Retorno.noImplementada();
+        Bicicleta b = buscarBicicletaPorCodigo(codigo);
+        
+        if (esVacio(codigo) || esVacio(motivo)) return Retorno.error1();
+        if (b == null) return Retorno.error2();
+        if (b.getEstado() == Bicicleta.Estado.ALQUILADA) return Retorno.error3();
+        if (b.getEstado() == Bicicleta.Estado.MANTENIMIENTO) return Retorno.error4();
+        
+        Estacion ea = b.getEstacionActual();
+        
+        if (ea != null) {
+            ea.retirarBiciPorCodigo(codigo);
+            deposito.Adicionar(b);
+        }
+        b.setEstado(Bicicleta.Estado.MANTENIMIENTO); 
+        b.setMotivoMantenimiento(motivo);
+         
+        return Retorno.ok();
     }
 
     @Override

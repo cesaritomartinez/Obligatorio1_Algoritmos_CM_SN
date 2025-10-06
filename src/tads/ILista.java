@@ -17,4 +17,6 @@ public interface ILista<T> {
      boolean existeElemento(T x);
     
     void adicionarOrdenado(T x);
+    
+    int indiceDe(T x);
 }

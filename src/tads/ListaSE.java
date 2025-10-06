@@ -125,5 +125,21 @@ public class ListaSE<T extends Comparable<T>> implements ILista<T> {
        
         return false;
     }
+    
+    @Override
+    public int indiceDe(T elem) {
+    int pos = 0;
+    NodoSE<T> aux = cabeza;
+    while (aux != null) {
+        T dato = aux.getDato();
+        if ((elem == null && dato == null) ||
+            (elem != null && elem.equals(dato))) {
+            return pos;
+        }
+        aux = aux.getSiguiente();
+        pos++;
+    }
+    return -1;
+    }
 
 }
