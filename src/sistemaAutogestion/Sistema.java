@@ -26,6 +26,8 @@ public class Sistema implements IObligatorio {
     
     private ListaSE<Bicicleta> bicicletas;
     
+    private ListaSE<Barrio> barrios;
+    
     // =======================
     // Contadores/estadísticas
     // =======================
@@ -67,7 +69,7 @@ public class Sistema implements IObligatorio {
     int n = estaciones.Longitud();
     for (int i = 0; i < n; i++) {
         est = estaciones.Obtener(i);
-        if (est.getNombre().equals(nombre)) return est;
+        if (est.getNombre().toLowerCase().equals(nombre.toLowerCase())) return est;
     }
     return null;
     }
@@ -93,6 +95,21 @@ public class Sistema implements IObligatorio {
     return null;
     }
     
+    private Barrio barrioBuscar(String nombre) {
+    int n = barrios.Longitud();
+    for (int i = 0; i < n; i++) {
+        Barrio b = barrios.Obtener(i);
+        if (b.getNombre().equals(nombre)) return b;
+    }
+    return null;
+}
+    private Barrio barrioObtenerOCrear(String nombre) {
+    Barrio b = barrioBuscar(nombre);
+    if (b != null) return b;
+    Barrio nuevo = new Barrio(nombre);
+    barrios.adicionarOrdenado(nuevo); 
+    return nuevo;
+}
 
     @Override
     public Retorno crearSistemaDeGestion() {
@@ -102,6 +119,7 @@ public class Sistema implements IObligatorio {
     deposito = new ListaSE<>();
     retiros = new ListaSE<>();
     bicicletas = new ListaSE<>();
+    barrios = new ListaSE<>(); 
     
         return Retorno.ok();
     }
@@ -111,10 +129,10 @@ public class Sistema implements IObligatorio {
         if (esVacio(nombre) || esVacio(barrio)) return Retorno.error1();
         if (capacidad <=0) return Retorno.error2();
         if (buscarEstacion(nombre) != null) return Retorno.error3();
-        
-        Estacion estacion = new Estacion(nombre, barrio, capacidad);
+        Barrio b = barrioObtenerOCrear(barrio);
+        Estacion estacion = new Estacion(nombre, b, capacidad);
         estaciones.adicionarOrdenado(estacion);
-        
+        b.sumarCapacidad(capacidad);
         return Retorno.ok();
     }
 
@@ -157,6 +175,7 @@ public class Sistema implements IObligatorio {
         
         if (ea != null) {
             ea.retirarBiciPorCodigo(codigo);
+            ea.getBarrio().restarAnclada();
             deposito.adicionarOrdenado(b);
         }
         b.setEstado(Bicicleta.Estado.MANTENIMIENTO); 
@@ -183,7 +202,9 @@ public class Sistema implements IObligatorio {
         Estacion estacionAEliminar = buscarEstacion(nombre);
         if (estacionAEliminar == null) return Retorno.error2();
         if (!estacionAEliminar.sinPendientes()) return Retorno.error3();
-
+        
+        //restarle capacidad al barrio
+        estacionAEliminar.getBarrio().restarCapacidad(estacionAEliminar.getCapacidad());
         // 1. Encontramos el índice (la posición) de la estación que queremos eliminar.
         int indiceDeLaEstacion = this.estaciones.indiceDe(estacionAEliminar);
 
@@ -207,12 +228,14 @@ public class Sistema implements IObligatorio {
         
         if (estacionOrigen != null){
         estacionOrigen.retirarBiciPorCodigo(codigo);
+        estacionOrigen.getBarrio().restarAnclada();
         e.anclarBicicleta(b);
         }else{
             int indice = deposito.indiceDe(b);
             deposito.Eliminar(indice);
             e.anclarBicicleta(b);
         }
+        e.getBarrio().sumarAnclada();
         return Retorno.ok();
     }
 
@@ -265,17 +288,44 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno listarBicicletasDeEstacion(String nombreEstacion) {
-        return Retorno.noImplementada();
+        if (esVacio(nombreEstacion)) return Retorno.error1();//no se pide pero por si las dudas
+        Estacion e = buscarEstacion(nombreEstacion);
+        if (e == null) return Retorno.error2();
+        String listado = e.listarCodigosOrdenados();
+        return Retorno.ok(listado);
+       
     }
 
     @Override
     public Retorno estacionesConDisponibilidad(int n) {
-        return Retorno.noImplementada();
+        if (n <= 1) return Retorno.error1();//no deberia ser <1??
+        int ce = estaciones.Longitud();//ce = cantidad de estaciones
+        int contador = 0;
+        for (int i = 0; i < ce; i++){
+            Estacion e = estaciones.Obtener(i);
+            int bicicletasDisponibles = e.getOcupacion();
+            if (bicicletasDisponibles > n) contador++;
+        }
+        return Retorno.ok(contador);
+        
     }
 
     @Override
     public Retorno ocupacionPromedioXBarrio() {
-        return Retorno.noImplementada();
+        if (barrios.Vacia()) return Retorno.ok("");
+        String salida = "";
+        int cantB = barrios.Longitud();
+        for (int i = 0; i < cantB; i++){
+            Barrio b = barrios.Obtener(i);
+            int capTot = b.getCapacidadTotal();
+            if (capTot > 0) {
+                int ancladas = b.getAncladas();
+                int promedio = (ancladas * 100 + capTot / 2) / capTot;  // redondeo entero
+                if (!salida.isEmpty()) salida += "|";
+                salida += b.getNombre() + "#" + promedio;
+            }
+        }
+        return Retorno.ok(salida);
     }
 
     @Override

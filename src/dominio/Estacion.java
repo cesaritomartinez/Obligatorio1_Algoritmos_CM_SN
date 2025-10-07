@@ -7,7 +7,7 @@ import tads.PosFueraDeRangoException;
 public class Estacion implements Comparable<Estacion>{
 
     private final String nombre;   // único en el sistema
-    private final String barrio;
+    private final Barrio barrio;
     private final int capacidad;   // > 0 (anclajes)
 
     // Bicicletas ancladas, SIEMPRE ordenadas por código (Bicicleta implements Comparable por código)
@@ -17,7 +17,7 @@ public class Estacion implements Comparable<Estacion>{
     private final ListaSE<String> colaAlquiler;
     private final ListaSE<String> colaAnclaje;
 
-    public Estacion(String nombre, String barrio, int capacidad) {
+    public Estacion(String nombre, Barrio barrio, int capacidad) {
         this.nombre = nombre;
         this.barrio = barrio;
         this.capacidad = capacidad;
@@ -28,11 +28,10 @@ public class Estacion implements Comparable<Estacion>{
 
     // ===== Getters básicos =====
     public String getNombre() { return nombre; }
-    public String getBarrio() { return barrio; }
+    public Barrio getBarrio() { return barrio; }
     public int getCapacidad() { return capacidad; }
     public int getOcupacion() { return ancladas.Longitud(); }
     public int getCuposLibres() { return capacidad - ancladas.Longitud(); }
-    
     
     public boolean tieneAnclajeLibre() { return getCuposLibres() > 0; }
 
@@ -68,6 +67,7 @@ public class Estacion implements Comparable<Estacion>{
     }
     return resultado;
     }
+    
     
     public void retirarBiciPorCodigo(String codigo) {
         int n = ancladas.Longitud();
@@ -134,7 +134,7 @@ public class Estacion implements Comparable<Estacion>{
     @Override
     public String toString() {
         
-        return nombre + "#" + barrio + "#" + getOcupacion() + "/" + capacidad;
+        return nombre + "#" + barrio.getNombre() + "#" + getOcupacion() + "/" + capacidad;
     }
 
     
