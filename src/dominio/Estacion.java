@@ -32,6 +32,8 @@ public class Estacion implements Comparable<Estacion>{
     public int getCapacidad() { return capacidad; }
     public int getOcupacion() { return ancladas.Longitud(); }
     public int getCuposLibres() { return capacidad - ancladas.Longitud(); }
+    
+    
     public boolean tieneAnclajeLibre() { return getCuposLibres() > 0; }
 
     // ===== Gestión de bicis ancladas (ordenadas por código) =====
@@ -114,7 +116,7 @@ public class Estacion implements Comparable<Estacion>{
 
     /** True si NO hay bicis ancladas NI colas (útil para eliminar estación). */
     public boolean sinPendientes() {
-        return ancladas.Longitud() == 0 && colaAlquiler.Vacia() && colaAnclaje.Vacia();
+        return ancladas.Vacia() && colaAlquiler.Vacia() && colaAnclaje.Vacia();
     }
 
     // % ocupación de la estación (enteros redondeados). 

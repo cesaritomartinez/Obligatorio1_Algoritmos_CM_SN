@@ -71,6 +71,7 @@ public class Sistema implements IObligatorio {
     }
     return null;
     }
+
     
     private Usuario buscarUsuarioPorCI(String ci) {
         int n = usuarios.Longitud();
@@ -145,9 +146,9 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno marcarEnMantenimiento(String codigo, String motivo) {
-        Bicicleta b = buscarBicicletaPorCodigo(codigo);
-        
+             
         if (esVacio(codigo) || esVacio(motivo)) return Retorno.error1();
+        Bicicleta b = buscarBicicletaPorCodigo(codigo);
         if (b == null) return Retorno.error2();
         if (b.getEstado() == Bicicleta.Estado.ALQUILADA) return Retorno.error3();
         if (b.getEstado() == Bicicleta.Estado.MANTENIMIENTO) return Retorno.error4();
@@ -156,7 +157,7 @@ public class Sistema implements IObligatorio {
         
         if (ea != null) {
             ea.retirarBiciPorCodigo(codigo);
-            deposito.Adicionar(b);
+            deposito.adicionarOrdenado(b);
         }
         b.setEstado(Bicicleta.Estado.MANTENIMIENTO); 
         b.setMotivoMantenimiento(motivo);
@@ -166,17 +167,53 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno repararBicicleta(String codigo) {
-        return Retorno.noImplementada();
+        if (esVacio(codigo)) return Retorno.error1();        
+        Bicicleta b = buscarBicicletaPorCodigo(codigo);
+        if (b == null) return Retorno.error2();
+        if (b.getEstado() != Bicicleta.Estado.MANTENIMIENTO) return Retorno.error3();
+        
+        b.setEstado(Bicicleta.Estado.DISPONIBLE);
+               
+        return Retorno.ok();
     }
 
     @Override
     public Retorno eliminarEstacion(String nombre) {
-        return Retorno.noImplementada();
+        if (esVacio(nombre)) return Retorno.error1();
+        Estacion estacionAEliminar = buscarEstacion(nombre);
+        if (estacionAEliminar == null) return Retorno.error2();
+        if (!estacionAEliminar.sinPendientes()) return Retorno.error3();
+
+        // 1. Encontramos el índice (la posición) de la estación que queremos eliminar.
+        int indiceDeLaEstacion = this.estaciones.indiceDe(estacionAEliminar);
+
+        // 2. Si el índice es válido (es decir, no es -1), eliminamos la estación de esa posición.
+        if (indiceDeLaEstacion != -1) this.estaciones.Eliminar(indiceDeLaEstacion);
+        
+        return Retorno.ok();
     }
+        
 
     @Override
     public Retorno asignarBicicletaAEstacion(String codigo, String nombreEstacion) {
-        return Retorno.noImplementada();
+        if (esVacio(codigo) || esVacio(nombreEstacion)) return Retorno.error1();
+        Bicicleta b = buscarBicicletaPorCodigo(codigo);
+        Estacion e = buscarEstacion(nombreEstacion);
+        if (b == null || b.getEstado() != Bicicleta.Estado.DISPONIBLE) return Retorno.error2();
+        if (e == null) return Retorno.error3();
+        if (!e.tieneAnclajeLibre()) return Retorno.error4();
+        
+        Estacion estacionOrigen = b.getEstacionActual();
+        
+        if (estacionOrigen != null){
+        estacionOrigen.retirarBiciPorCodigo(codigo);
+        e.anclarBicicleta(b);
+        }else{
+            int indice = deposito.indiceDe(b);
+            deposito.Eliminar(indice);
+            e.anclarBicicleta(b);
+        }
+        return Retorno.ok();
     }
 
     @Override
