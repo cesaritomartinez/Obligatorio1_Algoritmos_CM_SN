@@ -111,6 +111,15 @@ public class Sistema implements IObligatorio {
     return nuevo;
 }
 
+    // Llamalo cuando un alquiler se COMPLETA (en devolverBicicleta)
+    private void incrementarUso(Bicicleta.Tipo tipo) {
+    if (tipo == Bicicleta.Tipo.ELECTRICA)      usosElectrica++;
+    else if (tipo == Bicicleta.Tipo.MOUNTAIN)  usosMountain++;
+    else if (tipo == Bicicleta.Tipo.URBANA)    usosUrbana++;
+}
+
+    
+    
     @Override
     public Retorno crearSistemaDeGestion() {
         
@@ -120,6 +129,9 @@ public class Sistema implements IObligatorio {
     retiros = new ListaSE<>();
     bicicletas = new ListaSE<>();
     barrios = new ListaSE<>(); 
+    
+    usosUrbana = usosMountain = usosElectrica = 0;
+
     
         return Retorno.ok();
     }
@@ -241,11 +253,20 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno alquilarBicicleta(String cedula, String nombreEstacion) {
+        
+
+
         return Retorno.noImplementada();
     }
 
     @Override
     public Retorno devolverBicicleta(String cedula, String nombreEstacionDestino) {
+        
+        
+        //despues de devolver
+        //incrementarUso(b.getTipo());
+
+        
         return Retorno.noImplementada();
     }
 
@@ -330,7 +351,43 @@ public class Sistema implements IObligatorio {
 
     @Override
     public Retorno rankingTiposPorUso() {
-        return Retorno.noImplementada();
+         // Parejas iniciales (tipo, usos) a partir de los contadores actuales
+    String tipoPrimero   = "Electrica"; int usosPrimero   = usosElectrica;
+    String tipoSegundo   = "Mountain";  int usosSegundo   = usosMountain;
+    String tipoTercero   = "Urbana";    int usosTercero   = usosUrbana;
+
+    // Queremos: más usos primero; si empatan, alfabético por tipo
+
+    // Aseguro que (tipoPrimero, usosPrimero) sea mejor que (tipoSegundo, usosSegundo)
+    if (usosSegundo > usosPrimero ||
+       (usosSegundo == usosPrimero && tipoSegundo.compareToIgnoreCase(tipoPrimero) < 0)) {
+
+        String tipoTemporal = tipoPrimero;  tipoPrimero = tipoSegundo;  tipoSegundo = tipoTemporal;
+        int    usosTemporal = usosPrimero;  usosPrimero = usosSegundo;  usosSegundo = usosTemporal;
+    }
+
+    // Comparo el tercero con el NUEVO primero para que el primero sea el mejor de los tres
+    if (usosTercero > usosPrimero ||
+       (usosTercero == usosPrimero && tipoTercero.compareToIgnoreCase(tipoPrimero) < 0)) {
+
+        String tipoTemporal = tipoPrimero;  tipoPrimero = tipoTercero;  tipoTercero = tipoTemporal;
+        int    usosTemporal = usosPrimero;  usosPrimero = usosTercero;  usosTercero = usosTemporal;
+    }
+
+    // Ordeno segundo y tercero entre sí (segundo debe quedar >= tercero)
+    if (usosTercero > usosSegundo ||
+       (usosTercero == usosSegundo && tipoTercero.compareToIgnoreCase(tipoSegundo) < 0)) {
+
+        String tipoTemporal = tipoSegundo;  tipoSegundo = tipoTercero;  tipoTercero = tipoTemporal;
+        int    usosTemporal = usosSegundo;  usosSegundo = usosTercero;  usosTercero = usosTemporal;
+    }
+
+    String salida =
+        tipoPrimero + "#" + usosPrimero + "|" +
+        tipoSegundo + "#" + usosSegundo + "|" +
+        tipoTercero + "#" + usosTercero;
+
+    return Retorno.ok(salida);
     }
 
     @Override
