@@ -48,5 +48,6 @@ public class Test3_02ListarUsuarios {
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("Usuario01#11111111|Usuario02#31221111|Usuario03#11331111", retorno.getValorString());
     }
+    
 
 }

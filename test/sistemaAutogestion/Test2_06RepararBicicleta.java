@@ -64,4 +64,6 @@ public class Test2_06RepararBicicleta {
         retorno = s.repararBicicleta("EF0001"); // ya no está en mantenimiento
         assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
     }
+       
+    
 }

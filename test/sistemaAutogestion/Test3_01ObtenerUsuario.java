@@ -39,5 +39,5 @@ public class Test3_01ObtenerUsuario {
         retorno = s.obtenerUsuario("28843838");
         assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
     }
-
+    
 }

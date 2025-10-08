@@ -96,7 +96,7 @@ public class Test2_05MarcarEnMantenimiento {
     // =========================
     // OK: estaba anclada → pasa a depósito en MANTENIMIENTO (activar con 2.8)
     // =========================
-    @Ignore("Activar cuando esté implementado asignarBicicletaAEstacion (2.8)")
+    //@Ignore("Activar cuando esté implementado asignarBicicletaAEstacion (2.8)")
     @Test
     public void marcarEnMantenimientoOk_desdeEstacion() {
         assertEquals(Retorno.Resultado.OK,
@@ -116,4 +116,6 @@ public class Test2_05MarcarEnMantenimiento {
         // Retorno listado = s.listarBicisEnDeposito();
         // assertTrue(listado.getValorString().contains("GH3456#URBANA#MANTENIMIENTO"));
     }
+   
+    
 }

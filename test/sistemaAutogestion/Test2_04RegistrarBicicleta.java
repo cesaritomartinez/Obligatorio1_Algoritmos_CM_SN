@@ -45,5 +45,6 @@ public class Test2_04RegistrarBicicleta {
         retorno = s.registrarBicicleta("ZZZ999", "Electrica"); // código duplicado
         assertEquals(Retorno.Resultado.ERROR_4, retorno.getResultado());
     }
+    
 }
 
