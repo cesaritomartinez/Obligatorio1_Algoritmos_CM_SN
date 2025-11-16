@@ -31,17 +31,6 @@ public class Bicicleta implements Comparable<Bicicleta> {
     public void setEstadoDisponible() {this.estado = Estado.DISPONIBLE;}
 
     
-    public void marcarEnMantenimiento(String codigo, String motivo) {
-        this.estado = Estado.MANTENIMIENTO;
-        this.motivoMantenimiento = motivo;
-    }
-
-    
-    public void reparar() {
-        this.estado = Estado.DISPONIBLE;
-        this.motivoMantenimiento = null;
-    }
-
     public void setEstado(Estado nuevo) {
         this.estado = nuevo;
     }

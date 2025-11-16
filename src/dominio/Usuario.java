@@ -26,10 +26,6 @@ public class Usuario implements Comparable<Usuario> {
         return nombre;
     }
 
-    public void setNombre(String nuevoNombre) {
-        this.nombre = nuevoNombre;
-    }
-
     public void sumarAlquileresCompletados() {
         this.alquileresCompletados++;
     }
@@ -54,19 +50,8 @@ public class Usuario implements Comparable<Usuario> {
         this.codigoBiciActual = codigo;
     }
 
-    // Lo usa Sistema al alquilar/devolver
-    public void iniciarAlquiler(String codigoBici) {
-        this.codigoBiciActual = codigoBici;
-    }
-
-    public void finalizarAlquiler() {
-        if (this.codigoBiciActual != null) {
-            this.codigoBiciActual = null;
-            this.alquileresCompletados++;
-        }
-    }
-
-    @Override
+    
+     @Override
     public int compareTo(Usuario o) {
         int cmp = this.nombre.compareToIgnoreCase(o.nombre);
         return (cmp != 0) ? cmp : this.cedula.compareTo(o.cedula);

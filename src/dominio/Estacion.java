@@ -91,7 +91,6 @@ public class Estacion implements Comparable<Estacion>{
     public void encolarEsperaAlquiler(String cedula) {
         colaAlquiler.encolar(cedula); 
     }
-    public boolean hayEsperandoAlquiler() { return !colaAlquiler.estaVacia(); }
     
     public String desencolarEsperaAlquiler() {
         if (colaAlquiler.estaVacia()) return null;
@@ -99,19 +98,8 @@ public class Estacion implements Comparable<Estacion>{
         return ci;
     }
 
-    // ---- Espera para ANCLAR (devolver) en esta estación ----
-    public void encolarEsperaAnclaje(String cedula) {
-        colaAnclaje.encolar(cedula);
-    }
-    public boolean hayEsperandoAnclaje() { return !colaAnclaje.estaVacia(); }
-    
-    public String desencolarEsperaAnclaje() {
-        if (colaAnclaje.estaVacia()) return null;
-        String ci = colaAnclaje.desencolar();
-        return ci;
-    }
-
-    // ===== Apoyos para reglas del enunciado =====
+   
+        // ===== Apoyos para reglas del enunciado =====
 
     /** True si NO hay bicis ancladas NI colas (útil para eliminar estación). */
     public boolean sinPendientes() {

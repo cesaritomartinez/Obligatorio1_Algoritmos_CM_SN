@@ -185,18 +185,8 @@ public class Sistema implements IObligatorio {
         }
     }
 
-    private void llevarBiciAlFinalDelDeposito(String codigo) {
-        int n = deposito.Longitud();
-        for (int i = 0; i < n; i++) {
-            Bicicleta b = deposito.Obtener(i);
-            if (b.getCodigo().equalsIgnoreCase(codigo)) {
-                deposito.Eliminar(i);   // asumimos índice válido
-                deposito.Adicionar(b);  // la pone al final
-                return;
-            }
-        }
-    }
 
+    //2.1
     @Override
     public Retorno crearSistemaDeGestion() {
 
@@ -213,6 +203,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.2
     @Override
     public Retorno registrarEstacion(String nombre, String barrio, int capacidad) {
         nombre = sacaEspacios(nombre);
@@ -233,6 +224,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.3
     @Override
     public Retorno registrarUsuario(String cedula, String nombre) {
         cedula = sacaEspacios(cedula);
@@ -253,6 +245,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.4
     @Override
     public Retorno registrarBicicleta(String codigo, String tipo) {
         codigo = sacaEspacios(codigo).toUpperCase();
@@ -277,6 +270,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.5
     @Override
     public Retorno marcarEnMantenimiento(String codigo, String motivo) {
         codigo = sacaEspacios(codigo);
@@ -308,6 +302,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.6
     @Override
     public Retorno repararBicicleta(String codigo) {
         codigo = sacaEspacios(codigo);
@@ -327,6 +322,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.7
     @Override
     public Retorno eliminarEstacion(String nombre) {
         nombre = sacaEspacios(nombre);
@@ -354,6 +350,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.8
     @Override
     public Retorno asignarBicicletaAEstacion(String codigo, String nombreEstacion) {
         codigo = sacaEspacios(codigo);
@@ -388,6 +385,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok();
     }
 
+    //2.9
     @Override
     public Retorno alquilarBicicleta(String cedula, String nombreEstacion) {
         if (esVacio(cedula) || esVacio(nombreEstacion)) {
@@ -416,13 +414,13 @@ public class Sistema implements IObligatorio {
             Alquiler a = new Alquiler(codigo, cedula, e.getNombre());
             alquileres.Adicionar(a);
             historicoAlquileres.apilar(a);
-            u.sumarAlquileresCompletados();
 
         }
 
         return Retorno.ok();
     }
 
+    //2.10
     @Override
     public Retorno devolverBicicleta(String cedula, String nombreEstacionDestino) {
         if (esVacio(cedula) || esVacio(nombreEstacionDestino)) {
@@ -444,7 +442,8 @@ public class Sistema implements IObligatorio {
         if (!ed.tieneAnclajeLibre()) {
             ed.colaAnclaje.encolar(u.getCodigoBiciActual());
             a.marcarEsperaAnclaje(nombreEstacionDestino);//actualiza el alquiler
-            u.setCodigoBiciActual(null);
+            u.setCodigoBiciActual(null);//se ancla la bici en espera y se desvincula al usuario
+            u.sumarAlquileresCompletados();
         } else {
             ed.anclarBicicleta(b);
             b.setEstadoDisponible();
@@ -459,16 +458,18 @@ public class Sistema implements IObligatorio {
                 usosUrbana++;
             }
             a.finalizar(nombreEstacionDestino);
+            u.sumarAlquileresCompletados();
+
             String posibleUsuarioDestino = ed.desencolarEsperaAlquiler();
             if (posibleUsuarioDestino != null) {
                 alquilarBicicleta(posibleUsuarioDestino, nombreEstacionDestino);
             }
         }
-        u.restarAlquileresCompletados();
 
         return Retorno.ok();
     }
 
+    //2.11
     @Override
     public Retorno deshacerUltimosRetiros(int n) {
         if (n <= 0) {
@@ -512,6 +513,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(listado);
     }
 
+    //3.1
     @Override
     public Retorno obtenerUsuario(String ci) {
         ci = sacaEspacios(ci);
@@ -528,6 +530,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(u.toString());
     }
 
+    //3.2
     @Override
     public Retorno listarUsuarios() {
         int total = usuarios.Longitud();
@@ -541,6 +544,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(listado);
     }
 
+    //3.3
     @Override //Recursiva
     public Retorno listarBicisEnDeposito() {
 
@@ -626,6 +630,7 @@ public class Sistema implements IObligatorio {
 
     }
 
+    //3.4
     @Override
     public Retorno informaciónMapa(String[][] mapa) {
         // Manejo de nulos / vacíos
@@ -695,6 +700,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(parte1 + "|" + parte2);
     }
 
+    //3.5
     @Override
     public Retorno listarBicicletasDeEstacion(String nombreEstacion) {
         nombreEstacion = sacaEspacios(nombreEstacion);
@@ -710,6 +716,7 @@ public class Sistema implements IObligatorio {
 
     }
 
+    //3.6
     @Override
     public Retorno estacionesConDisponibilidad(int n) {
         if (n <= 1) {
@@ -728,6 +735,7 @@ public class Sistema implements IObligatorio {
 
     }
 
+    //3.7
     @Override
     public Retorno ocupacionPromedioXBarrio() {
         if (barrios.Vacia()) {
@@ -750,6 +758,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(salida);
     }
 
+    //3.8
     @Override
     public Retorno rankingTiposPorUso() {
         // Parejas iniciales (tipo, usos) a partir de los contadores actuales
@@ -805,6 +814,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(salida);
     }
 
+    //3.9
     @Override
     public Retorno usuariosEnEspera(String nombreEstacion) {
         String listado = "";
@@ -830,6 +840,7 @@ public class Sistema implements IObligatorio {
         return Retorno.ok(listado);
     }
 
+    //3.10
     @Override
     public Retorno usuarioMayor() {
         String usuarioMayor = "";
