@@ -185,7 +185,6 @@ public class Sistema implements IObligatorio {
         }
     }
 
-
     //2.1
     @Override
     public Retorno crearSistemaDeGestion() {
@@ -448,15 +447,8 @@ public class Sistema implements IObligatorio {
             ed.anclarBicicleta(b);
             b.setEstadoDisponible();
             u.setCodigoBiciActual(null);
-            if (b.getTipo() == Bicicleta.Tipo.ELECTRICA) {
-                usosElectrica++;
-            }
-            if (b.getTipo() == Bicicleta.Tipo.MOUNTAIN) {
-                usosMountain++;
-            }
-            if (b.getTipo() == Bicicleta.Tipo.URBANA) {
-                usosUrbana++;
-            }
+            incrementarUso(b.getTipo());
+
             a.finalizar(nombreEstacionDestino);
             u.sumarAlquileresCompletados();
 
@@ -819,12 +811,12 @@ public class Sistema implements IObligatorio {
     public Retorno usuariosEnEspera(String nombreEstacion) {
         String listado = "";
         Estacion e = buscarEstacion(nombreEstacion);
-        ColaSE<String> cola = e.colaAlquiler;
         ColaSE<String> aux = new ColaSE<>();
 
         if (e == null) {
             return Retorno.ok(listado);
         }
+        ColaSE<String> cola = e.colaAlquiler;
 
         while (!cola.estaVacia()) {
             String cedula = cola.desencolar();
