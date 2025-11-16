@@ -18,16 +18,47 @@ public class Usuario implements Comparable<Usuario> {
         this.codigoBiciActual = null;
     }
 
-    public String getCedula() { return cedula; }
-    public String getNombre() { return nombre; }
-    public void setNombre(String nuevoNombre) { this.nombre = nuevoNombre; }
+    public String getCedula() {
+        return cedula;
+    }
 
-    public int getAlquileresCompletados() { return alquileresCompletados; }
-    public boolean tieneAlquilerActivo() { return codigoBiciActual != null; }
-    public String getCodigoBiciActual() { return codigoBiciActual; }
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nuevoNombre) {
+        this.nombre = nuevoNombre;
+    }
+
+    public void sumarAlquileresCompletados() {
+        this.alquileresCompletados++;
+    }
+
+    public void restarAlquileresCompletados() {
+        this.alquileresCompletados--;
+    }
+
+    public int getAlquileresCompletados() {
+        return alquileresCompletados;
+    }
+
+    public boolean tieneAlquilerActivo() {
+        return codigoBiciActual != null;
+    }
+
+    public String getCodigoBiciActual() {
+        return codigoBiciActual;
+    }
+
+    public void setCodigoBiciActual(String codigo) {
+        this.codigoBiciActual = codigo;
+    }
 
     // Lo usa Sistema al alquilar/devolver
-    public void iniciarAlquiler(String codigoBici) { this.codigoBiciActual = codigoBici; }
+    public void iniciarAlquiler(String codigoBici) {
+        this.codigoBiciActual = codigoBici;
+    }
+
     public void finalizarAlquiler() {
         if (this.codigoBiciActual != null) {
             this.codigoBiciActual = null;
@@ -41,11 +72,9 @@ public class Usuario implements Comparable<Usuario> {
         return (cmp != 0) ? cmp : this.cedula.compareTo(o.cedula);
     }
 
-
     @Override
     public String toString() {
         // Requerido por 3.1 / 3.2: "nombre#cedula"
         return nombre + "#" + cedula;
     }
 }
-

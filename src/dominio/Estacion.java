@@ -1,5 +1,6 @@
 package dominio;
 
+import tads.ColaSE;
 import tads.ListaSE;
 import tads.ListaVaciaException;
 import tads.PosFueraDeRangoException;
@@ -14,16 +15,16 @@ public class Estacion implements Comparable<Estacion>{
     private final ListaSE<Bicicleta> ancladas;
 
     // Colas con cédulas: espera para ALQUILAR y para ANCLAR (devolver)
-    private final ListaSE<String> colaAlquiler;
-    private final ListaSE<String> colaAnclaje;
+    public final ColaSE<String> colaAlquiler;//guarda la cedula del usuario
+    public final ColaSE<String> colaAnclaje;//guarda el codigo de la bici
 
     public Estacion(String nombre, Barrio barrio, int capacidad) {
         this.nombre = nombre;
         this.barrio = barrio;
         this.capacidad = capacidad;
         this.ancladas = new ListaSE<>();
-        this.colaAlquiler = new ListaSE<>();
-        this.colaAnclaje = new ListaSE<>();
+        this.colaAlquiler = new ColaSE<>();
+        this.colaAnclaje = new ColaSE<>();
     }
 
     // ===== Getters básicos =====
@@ -88,27 +89,25 @@ public class Estacion implements Comparable<Estacion>{
 
     // ---- Espera para ALQUILAR en esta estación ----
     public void encolarEsperaAlquiler(String cedula) {
-        colaAlquiler.Adicionar(cedula); // enqueue al final
+        colaAlquiler.encolar(cedula); 
     }
-    public boolean hayEsperandoAlquiler() { return !colaAlquiler.Vacia(); }
+    public boolean hayEsperandoAlquiler() { return !colaAlquiler.estaVacia(); }
     
     public String desencolarEsperaAlquiler() {
-        if (colaAlquiler.Vacia()) return null;
-        String ci = colaAlquiler.Obtener(0);
-        colaAlquiler.Eliminar(0);
+        if (colaAlquiler.estaVacia()) return null;
+        String ci = colaAlquiler.desencolar();
         return ci;
     }
 
     // ---- Espera para ANCLAR (devolver) en esta estación ----
     public void encolarEsperaAnclaje(String cedula) {
-        colaAnclaje.Adicionar(cedula);
+        colaAnclaje.encolar(cedula);
     }
-    public boolean hayEsperandoAnclaje() { return !colaAnclaje.Vacia(); }
+    public boolean hayEsperandoAnclaje() { return !colaAnclaje.estaVacia(); }
     
     public String desencolarEsperaAnclaje() {
-        if (colaAnclaje.Vacia()) return null;
-        String ci = colaAnclaje.Obtener(0);
-        colaAnclaje.Eliminar(0);
+        if (colaAnclaje.estaVacia()) return null;
+        String ci = colaAnclaje.desencolar();
         return ci;
     }
 
@@ -116,7 +115,7 @@ public class Estacion implements Comparable<Estacion>{
 
     /** True si NO hay bicis ancladas NI colas (útil para eliminar estación). */
     public boolean sinPendientes() {
-        return ancladas.Vacia() && colaAlquiler.Vacia() && colaAnclaje.Vacia();
+        return ancladas.Vacia() && colaAlquiler.estaVacia() && colaAnclaje.estaVacia();
     }
 
     // % ocupación de la estación (enteros redondeados). 

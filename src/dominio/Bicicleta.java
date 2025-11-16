@@ -28,6 +28,7 @@ public class Bicicleta implements Comparable<Bicicleta> {
     public Estacion getEstacionActual() {return estacionActual;}
     
     public void setEstacionActual(Estacion e) { this.estacionActual = e; }
+    public void setEstadoDisponible() {this.estado = Estado.DISPONIBLE;}
 
     
     public void marcarEnMantenimiento(String codigo, String motivo) {

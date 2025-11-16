@@ -3,15 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/ListaSE.java</file>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/ILista.java</file>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/NodoSE.java</file>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/ListaVaciaException.java</file>
             <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/sistemaAutogestion/Sistema.java</file>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/dominio/Bicicleta.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/dominio/Estacion.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/dominio/Barrio.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/ListaSE.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/notas.java</file>
             <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/sistemaAutogestion/Retorno.java</file>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/sistemaAutogestion/IObligatorio.java</file>
-            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/PosFueraDeRangoException.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/ColaSE.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/dominio/Bicicleta.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/dominio/Usuario.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/tads/PilaSE.java</file>
+            <file>file:/C:/Users/roloy/Desktop/ORT/Algoritmos/Obligatorio/Obl-AED-ago25/src/dominio/Alquiler.java</file>
         </group>
     </open-files>
 </project-private>
