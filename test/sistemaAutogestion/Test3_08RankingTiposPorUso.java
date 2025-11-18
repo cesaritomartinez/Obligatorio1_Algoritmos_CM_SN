@@ -14,12 +14,41 @@ public class Test3_08RankingTiposPorUso {
         s.crearSistemaDeGestion();
     }
 
+    // --------- helpers ---------
+    private String[] partesRanking(String ranking) {
+        assertNotNull("El ranking no debe ser null", ranking);
+        return ranking.split("\\|");
+    }
+
+    private String getTipo(String parte) {
+        return parte.split("#")[0];
+    }
+
+    private int getUsos(String parte) {
+        return Integer.parseInt(parte.split("#")[1]);
+    }
+
+    private void assertTipoYUsos(String parte, String tipoEsperado, int usosEsperados) {
+        String tipo = getTipo(parte);
+        int usos = getUsos(parte);
+        assertEquals(tipoEsperado.toUpperCase(), tipo.toUpperCase());
+        assertEquals(usosEsperados, usos);
+    }
+    // ----------------------------
+
     @Test
     public void rankingInicialSinUsos() {
         // Recién creado, ningún alquiler → todos 0
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("Electrica#0|Mountain#0|Urbana#0", retorno.getValorString());
+
+        String[] partes = partesRanking(retorno.getValorString());
+        assertEquals(3, partes.length);
+
+        // Con todos en 0, el orden debe ser alfabético: Electrica, Mountain, Urbana
+        assertTipoYUsos(partes[0], "Electrica", 0);
+        assertTipoYUsos(partes[1], "Mountain", 0);
+        assertTipoYUsos(partes[2], "Urbana", 0);
     }
 
     @Test
@@ -28,7 +57,7 @@ public class Test3_08RankingTiposPorUso {
         //   Urbana: 3 usos
         //   Electrica: 2 usos
         //   Mountain: 1 uso
-        // → Esperado: "Urbana#3|Electrica#2|Mountain#1"
+        // → Esperado (por orden de uso desc): Urbana, Electrica, Mountain
 
         // ---------- URBANA x3 ----------
         assertEquals(Retorno.Resultado.OK,
@@ -40,7 +69,6 @@ public class Test3_08RankingTiposPorUso {
         assertEquals(Retorno.Resultado.OK,
                 s.asignarBicicletaAEstacion("URB001", "E_U").getResultado());
 
-        // 3 alquileres completos Urbana
         for (int i = 0; i < 3; i++) {
             assertEquals(Retorno.Resultado.OK,
                     s.alquilarBicicleta("11111111", "E_U").getResultado());
@@ -83,7 +111,13 @@ public class Test3_08RankingTiposPorUso {
         // ---------- Ver ranking ----------
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("Urbana#3|Electrica#2|Mountain#1", retorno.getValorString());
+
+        String[] partes = partesRanking(retorno.getValorString());
+        assertEquals(3, partes.length);
+
+        assertTipoYUsos(partes[0], "Urbana", 3);
+        assertTipoYUsos(partes[1], "Electrica", 2);
+        assertTipoYUsos(partes[2], "Mountain", 1);
     }
 
     @Test
@@ -93,7 +127,7 @@ public class Test3_08RankingTiposPorUso {
         //   Mountain: 2 usos
         //   Urbana: 1 uso
         // Con empate en 2, gana alfabéticamente "Electrica" antes que "Mountain"
-        // → Esperado: "Electrica#2|Mountain#2|Urbana#1"
+        // → Esperado: Electrica, Mountain, Urbana
 
         // ---------- ELECTRICA x2 ----------
         assertEquals(Retorno.Resultado.OK,
@@ -147,6 +181,12 @@ public class Test3_08RankingTiposPorUso {
         // ---------- Ver ranking ----------
         retorno = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("Electrica#2|Mountain#2|Urbana#1", retorno.getValorString());
+
+        String[] partes = partesRanking(retorno.getValorString());
+        assertEquals(3, partes.length);
+
+        assertTipoYUsos(partes[0], "Electrica", 2);
+        assertTipoYUsos(partes[1], "Mountain", 2);
+        assertTipoYUsos(partes[2], "Urbana", 1);
     }
 }

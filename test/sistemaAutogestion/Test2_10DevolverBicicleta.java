@@ -14,42 +14,50 @@ public class Test2_10DevolverBicicleta {
         s.crearSistemaDeGestion();
     }
 
+    // Preparar un escenario básico con un alquiler activo
     private void prepararAlquilerSimple() {
-        // Usuario, estación origen, estación destino y bici con alquiler activo
+        // Usuario
         assertEquals(Retorno.Resultado.OK,
                 s.registrarUsuario("12345678", "Ana").getResultado());
+
+        // Estaciones
         assertEquals(Retorno.Resultado.OK,
                 s.registrarEstacion("Centro", "Centro", 2).getResultado());
         assertEquals(Retorno.Resultado.OK,
                 s.registrarEstacion("Parque", "Parque Rodo", 2).getResultado());
+
+        // Bicicleta y asignación a estación origen
         assertEquals(Retorno.Resultado.OK,
                 s.registrarBicicleta("AB1234", "Urbana").getResultado());
         assertEquals(Retorno.Resultado.OK,
                 s.asignarBicicletaAEstacion("AB1234", "Centro").getResultado());
+
+        // Alquiler desde la estación Centro
         assertEquals(Retorno.Resultado.OK,
                 s.alquilarBicicleta("12345678", "Centro").getResultado());
     }
 
     @Test
-    public void devolverBicicletaOk() {
+    public void devolverBicicleta_OK_conAnclajeLibre() {
         prepararAlquilerSimple();
 
+        // Devolver en estación con anclaje libre
         retorno = s.devolverBicicleta("12345678", "Parque");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        // Opcional: verificar que el ranking refleje un uso de Urbana
+        // Verificamos que el ranking refleje 1 uso de URBANA
         Retorno rRanking = s.rankingTiposPorUso();
         assertEquals(Retorno.Resultado.OK, rRanking.getResultado());
-        assertTrue(rankingContieneUsoUrbana(rRanking.getValorString(), 1));
-    }
 
-    private boolean rankingContieneUsoUrbana(String ranking, int usosEsperados) {
-        // ranking: "Electrica#x|Mountain#y|Urbana#z"
-        return ranking != null && ranking.contains("Urbana#" + usosEsperados);
+        String ranking = rRanking.getValorString();
+        assertNotNull(ranking);
+        // ranking tiene el formato: "ELECTRICA#x|MOUNTAIN#y|URBANA#z"
+        assertTrue("Se esperaba ver URBANA#1 en el ranking pero fue: " + ranking,
+                   ranking.contains("URBANA#1"));
     }
 
     @Test
-    public void devolverBicicletaError01_parametrosVacios() {
+    public void devolverBicicleta_ERROR1_parametrosVacios() {
         retorno = s.devolverBicicleta("", "Parque");
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
 
@@ -58,7 +66,7 @@ public class Test2_10DevolverBicicleta {
     }
 
     @Test
-    public void devolverBicicletaError02_usuarioInexistenteOSinAlquiler() {
+    public void devolverBicicleta_ERROR2_usuarioInexistenteOSinAlquiler() {
         // Estación destino existe, pero usuario no
         assertEquals(Retorno.Resultado.OK,
                 s.registrarEstacion("Parque", "Parque Rodo", 2).getResultado());
@@ -75,7 +83,7 @@ public class Test2_10DevolverBicicleta {
     }
 
     @Test
-    public void devolverBicicletaError03_estacionDestinoInexistente() {
+    public void devolverBicicleta_ERROR3_estacionDestinoInexistente() {
         prepararAlquilerSimple();
 
         // Estación destino no existe → ERROR_3

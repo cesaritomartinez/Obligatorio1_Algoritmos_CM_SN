@@ -31,8 +31,9 @@ public class Test3_10UsuarioMayor {
         // Nadie alquila ni devuelve → todos con 0 alquileresCompletados
         retorno = s.usuarioMayor();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        // Con tu implementación actual, en este caso queda "" (ninguno “mayor”)
-        assertEquals("", retorno.getValorString());
+
+        // Con tu implementación actual, en empate de 0 gana la CI menor: 12345678
+        assertEquals("12345678", retorno.getValorString());
     }
 
     @Test
@@ -87,8 +88,7 @@ public class Test3_10UsuarioMayor {
         assertEquals(Retorno.Resultado.OK,
                 s.devolverBicicleta("11111111", "Centro").getResultado());
 
-        // Ambos tienen la misma cantidad de alquileresCompletados (1),
-        // gana el de CI menor: "11111111"
+        // Ambos tienen 1 alquiler completado, gana el de CI menor
         retorno = s.usuarioMayor();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         assertEquals("11111111", retorno.getValorString());

@@ -164,7 +164,7 @@ public class Sistema implements IObligatorio {
         int n = bicicletas.Longitud();
         for (int i = 0; i < n; i++) {
             Bicicleta b = bicicletas.Obtener(i);
-            if (b != null && cod.equals(b.getCodigo())) {
+            if (b != null && cod.equals(b.getCodigo().toUpperCase())) {
                 return b;
             }
         }
