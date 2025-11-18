@@ -38,6 +38,10 @@ public class Usuario implements Comparable<Usuario> {
         return alquileresCompletados;
     }
 
+    public void setCantAlquileres(int cantidad) {
+        this.alquileresCompletados = cantidad;
+    }
+
     public boolean tieneAlquilerActivo() {
         return codigoBiciActual != null;
     }

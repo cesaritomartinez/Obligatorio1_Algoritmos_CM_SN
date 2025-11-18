@@ -111,9 +111,6 @@ public class Sistema implements IObligatorio {
             estacionOrigen.getBarrio().restarAnclada();
             e.anclarBicicleta(b);
             e.getBarrio().sumarAnclada();
-            if (b != null) {
-                incrementarUso(b.getTipo());
-            }
         }
 
     }
@@ -197,7 +194,7 @@ public class Sistema implements IObligatorio {
         return nuevo;
     }
 
-    // Lo llamamos cuando un alquiler se COMPLETA (en devolverBicicleta)
+    // Lo llamamos cuando un alquiler se INICIA (en alquilarBicicleta)
     private void incrementarUso(Bicicleta.Tipo tipo) {
         if (tipo == Bicicleta.Tipo.ELECTRICA) {
             usosElectrica++;
@@ -439,6 +436,7 @@ public class Sistema implements IObligatorio {
             Alquiler a = new Alquiler(codigo, cedula, e.getNombre());
             alquileres.Adicionar(a);
             historicoAlquileres.apilar(a);
+            incrementarUso(b.getTipo());
             //aca queda anclaje libre... entonces hay que traer bici si es que la hay en el anclaje de espera
             ocuparAnclajeLibre(e);
         }
@@ -472,7 +470,6 @@ public class Sistema implements IObligatorio {
             ed.anclarBicicleta(b);
             b.setEstadoDisponible();
             u.setCodigoBiciActual(null);
-            incrementarUso(b.getTipo());
 
             a.finalizar(nombreEstacionDestino);
             u.sumarAlquileresCompletados();
@@ -779,11 +776,11 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno rankingTiposPorUso() {
         // Parejas iniciales (tipo, usos) a partir de los contadores actuales
-        String tipoPrimero = "Electrica";
+        String tipoPrimero = "ELECTRICA";
         int usosPrimero = usosElectrica;
-        String tipoSegundo = "Mountain";
+        String tipoSegundo = "MOUNTAIN";
         int usosSegundo = usosMountain;
-        String tipoTercero = "Urbana";
+        String tipoTercero = "URBANA";
         int usosTercero = usosUrbana;
 
         // Queremos: más usos primero; si empatan, alfabético por tipo
@@ -834,13 +831,19 @@ public class Sistema implements IObligatorio {
     //3.9
     @Override
     public Retorno usuariosEnEspera(String nombreEstacion) {
-        String listado = "";
-        Estacion e = buscarEstacion(nombreEstacion);
-        ColaSE<String> aux = new ColaSE<>();
-
-        if (e == null) {
-            return Retorno.ok(listado);
+        // Validación 1: parámetro vacío o null
+        if (esVacio(nombreEstacion)) {
+            return Retorno.error1();
         }
+
+        // Validación 2: estación no existe
+        Estacion e = buscarEstacion(nombreEstacion);
+        if (e == null) {
+            return Retorno.error2();
+        }
+
+        String listado = "";
+        ColaSE<String> aux = new ColaSE<>();
         ColaSE<String> cola = e.colaAlquiler;
 
         while (!cola.estaVacia()) {
@@ -861,7 +864,7 @@ public class Sistema implements IObligatorio {
     @Override
     public Retorno usuarioMayor() {
         String usuarioMayor = "";
-        int cantidadAlquileresPorUsuario = 0;
+        int cantidadAlquileresPorUsuario = -1;
         int cantidadTotalUsuarios = usuarios.Longitud();
         for (int i = 0; i < cantidadTotalUsuarios; i++) {
             Usuario u = usuarios.Obtener(i);
@@ -869,7 +872,7 @@ public class Sistema implements IObligatorio {
                 cantidadAlquileresPorUsuario = u.getAlquileresCompletados();
                 usuarioMayor = u.getCedula();
             } else if (u.getAlquileresCompletados() == cantidadAlquileresPorUsuario) {
-                if (u.getCedula().compareTo(usuarioMayor) < 0) {
+                if (!usuarioMayor.isEmpty() && u.getCedula().compareTo(usuarioMayor) < 0) {
                     usuarioMayor = u.getCedula();
                 }
             }

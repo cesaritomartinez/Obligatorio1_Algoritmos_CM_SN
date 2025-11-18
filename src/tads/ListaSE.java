@@ -142,4 +142,13 @@ public class ListaSE<T extends Comparable<T>> implements ILista<T> {
     return -1;
     }
 
+    // Métodos en minúsculas para compatibilidad con reflexión en tests
+    public int longitud() {
+        return Longitud();
+    }
+
+    public T obtener(int pos) {
+        return Obtener(pos);
+    }
+
 }
