@@ -95,6 +95,29 @@ public class Sistema implements IObligatorio {
         return null;
     }
 
+    private void ocuparAnclajeLibre(Estacion e) {
+        String codigoBici = e.existenBicicletasParaAnclar();
+        if (codigoBici != null && !codigoBici.isEmpty()) {
+            Bicicleta b = buscarBicicletaPorCodigo(codigoBici);
+            Alquiler a = buscarAlquilerPorCodigoBici(codigoBici);
+            if (a != null) {
+                String cedula = a.getCedulaUsuario();
+                Usuario u = buscarUsuarioPorCI(cedula);
+                u.setCodigoBiciActual(null);
+                a.finalizar(e.getNombre());
+            }
+            Estacion estacionOrigen = b.getEstacionActual();
+            estacionOrigen.retirarBiciPorCodigo(codigoBici);
+            estacionOrigen.getBarrio().restarAnclada();
+            e.anclarBicicleta(b);
+            e.getBarrio().sumarAnclada();
+            if (b != null) {
+                incrementarUso(b.getTipo());
+            }
+        }
+
+    }
+
     private Estacion buscarEstacion(String nombre) {
         nombre = sacaEspaciosMinus(nombre);
         Estacion est = null;
@@ -119,7 +142,7 @@ public class Sistema implements IObligatorio {
         for (int i = 0; i < n; i++) {
             Alquiler a = alquileres.Obtener(i);
             if (a != null && a.getCodigoBici() != null
-                    && a.getCodigoBici().equalsIgnoreCase(codigoBici)) {
+                    && a.getCodigoBici().equalsIgnoreCase(codigoBici) && a.esActivo()) {
                 return a;
             }
         }
@@ -247,7 +270,7 @@ public class Sistema implements IObligatorio {
     //2.4
     @Override
     public Retorno registrarBicicleta(String codigo, String tipo) {
-        codigo = sacaEspacios(codigo).toUpperCase();
+        codigo = sacaEspacios(codigo);
         tipo = sacaEspacios(tipo);
         if (esVacio(codigo) || esVacio(tipo)) {
             return Retorno.error1();
@@ -294,6 +317,7 @@ public class Sistema implements IObligatorio {
             ea.retirarBiciPorCodigo(codigo);
             ea.getBarrio().restarAnclada();
             deposito.Adicionar(b);
+            ocuparAnclajeLibre(ea);
         }
         b.setEstado(Bicicleta.Estado.MANTENIMIENTO);
         b.setMotivoMantenimiento(motivo);
@@ -375,10 +399,12 @@ public class Sistema implements IObligatorio {
             estacionOrigen.retirarBiciPorCodigo(codigo);
             estacionOrigen.getBarrio().restarAnclada();
             e.anclarBicicleta(b);
+
         } else {
             int indice = deposito.indiceDe(b);
             deposito.Eliminar(indice);
             e.anclarBicicleta(b);
+
         }
         e.getBarrio().sumarAnclada();
         return Retorno.ok();
@@ -413,7 +439,8 @@ public class Sistema implements IObligatorio {
             Alquiler a = new Alquiler(codigo, cedula, e.getNombre());
             alquileres.Adicionar(a);
             historicoAlquileres.apilar(a);
-
+            //aca queda anclaje libre... entonces hay que traer bici si es que la hay en el anclaje de espera
+            ocuparAnclajeLibre(e);
         }
 
         return Retorno.ok();
@@ -441,8 +468,6 @@ public class Sistema implements IObligatorio {
         if (!ed.tieneAnclajeLibre()) {
             ed.colaAnclaje.encolar(u.getCodigoBiciActual());
             a.marcarEsperaAnclaje(nombreEstacionDestino);//actualiza el alquiler
-            u.setCodigoBiciActual(null);//se ancla la bici en espera y se desvincula al usuario
-            u.sumarAlquileresCompletados();
         } else {
             ed.anclarBicicleta(b);
             b.setEstadoDisponible();
